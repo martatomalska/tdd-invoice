@@ -1,14 +1,12 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
-import java.util.regex.Matcher;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -139,6 +137,44 @@ public class InvoiceTest {
 			Integer number2 = new Invoice().getNumber();
 			Assert.assertThat(number1, Matchers.lessThan(number2));
 		}
+	}
+	
+	@Test
+	public void testPrintedInvoiceContainsNumber(){
+		String printedInvoice = invoice.getAsText();
+		String number = invoice.getNumber().toString();
+		Assert.assertThat(printedInvoice, Matchers.containsString("nr: " + number));
+	}
+	
+	
+	@Test
+	public void testPrintedInvoiceContainsProducts(){
+		invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+		String printedInvoice = invoice.getAsText();
+		Assert.assertThat(printedInvoice, Matchers.containsString("Chleb 2 5"));
+	}
+	
+	
+	@Test
+	public void testPrintedInvoiceContainsNumberOfProducts(){
+		invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+		invoice.addProduct(new OtherProduct("Gumowa kaczka", new BigDecimal("1")), 1);
+		invoice.addProduct(new DairyProduct("Kaczka", new BigDecimal("16")), 1);
+		Assert.assertThat(invoice.getAsText(), Matchers.containsString("Liczba pozycji: 3"));
+	}
+	
+	@Test
+	public void testEachProductIsInNewLine(){
+		invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")), 2);
+		invoice.addProduct(new OtherProduct("Frytki", new BigDecimal("6.50")), 2);
+		Assert.assertThat(invoice.getAsText(), Matchers.containsString("Chleb 2 5\nFrytki 2 6.50"));
+	}
+	
+	@Test
+	public void testAddingTheSameProductToInvoiceTwice(){
+		invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")));
+		invoice.addProduct(new TaxFreeProduct("Chleb", new BigDecimal("5")));
+		Assert.assertThat(invoice.getAsText(), Matchers.containsString("Chleb 2 5"));
 	}
 	
 }
