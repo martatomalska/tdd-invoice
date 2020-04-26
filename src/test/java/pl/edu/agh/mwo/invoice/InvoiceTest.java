@@ -7,7 +7,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.Invoice;
 import pl.edu.agh.mwo.invoice.product.DairyProduct;
 import pl.edu.agh.mwo.invoice.product.OtherProduct;
 import pl.edu.agh.mwo.invoice.product.Product;
@@ -103,5 +102,25 @@ public class InvoiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testInvoiceWithNegativeQuantity() {
         invoice.addProduct(new DairyProduct("Zsiadle mleko", new BigDecimal("5.55")), -1);
+    }
+
+    @Test
+    public void testInvoiceHasNumber() {
+        int number = invoice.getInvoiceNumber();
+        Assert.assertTrue(number > 0);
+    }
+
+    @Test
+    public void testInvoicesHaveDifferentNumbers() {
+        int number1 = new Invoice().getInvoiceNumber();
+        int number2 = new Invoice().getInvoiceNumber();
+        Assert.assertNotEquals(number1, number2);
+    }
+
+    @Test
+    public void testInvoicesHaveConsequentNumbers() {
+        int number1 = new Invoice().getInvoiceNumber();
+        int number2 = new Invoice().getInvoiceNumber();
+        Assert.assertEquals(number1, number2 - 1);
     }
 }
