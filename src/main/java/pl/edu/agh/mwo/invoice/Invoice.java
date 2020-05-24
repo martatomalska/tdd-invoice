@@ -46,4 +46,16 @@ public class Invoice {
     public int getInvoiceNumber() {
         return invoiceNumber;
     }
+
+    public String printInvoice() {
+        StringBuilder printedInvoice = new StringBuilder("Numer faktury: " + getInvoiceNumber() + "\n");
+        int numberOfProducts = 0;
+        for (Product product : products.keySet()) {
+            BigDecimal quantity = new BigDecimal(products.get(product));
+            printedInvoice.append(product.getName()).append(", ").append(quantity).append(", ").append(product.getPriceWithTax().multiply(quantity)).append("\n");
+            numberOfProducts ++;
+        }
+        printedInvoice.append("Liczba pozycji: ").append(numberOfProducts);
+        return printedInvoice.toString();
+    }
 }

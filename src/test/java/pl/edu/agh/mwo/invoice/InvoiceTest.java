@@ -123,4 +123,16 @@ public class InvoiceTest {
         int number2 = new Invoice().getInvoiceNumber();
         Assert.assertEquals(number1, number2 - 1);
     }
+
+    @Test
+    public void testPrintInvoice() {
+        Invoice invoice = new Invoice();
+        String validate = "Numer faktury: " + invoice.getInvoiceNumber() + "\n"
+                + "Kubek, 2, 10" + "\n"
+                + "Kozi Serek, 3, 32.40" + "\n"
+                + "Liczba pozycji: 2";
+        invoice.addProduct(new DairyProduct("Kozi Serek", new BigDecimal("10")), 3);
+        invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
+        Assert.assertEquals(validate, invoice.printInvoice());
+    }
 }
