@@ -135,4 +135,11 @@ public class InvoiceTest {
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
         Assert.assertEquals(validate, invoice.printInvoice());
     }
+
+    @Test
+    public void testDuplicateProducts() {
+        invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
+        invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 4);
+        Assert.assertEquals(6, invoice.getProductAmountByName("Kubek"));
+    }
 }

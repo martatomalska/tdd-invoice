@@ -18,7 +18,12 @@ public class Invoice {
         if (product == null || quantity <= 0) {
             throw new IllegalArgumentException();
         }
-        products.put(product, quantity);
+        if (isProductExists(product.getName())) {
+            products.replace(getProductByName(product.getName()),
+                    quantity + getProductAmountByName(product.getName()));
+        } else {
+            products.put(product, quantity);
+        }
     }
 
     public BigDecimal getNetTotal() {
@@ -48,14 +53,38 @@ public class Invoice {
     }
 
     public String printInvoice() {
-        StringBuilder printedInvoice = new StringBuilder("Numer faktury: " + getInvoiceNumber() + "\n");
+        StringBuilder printedInvoice = new StringBuilder();
+        printedInvoice.append("Numer faktury: ").append(getInvoiceNumber()).append("\n");
         int numberOfProducts = 0;
         for (Product product : products.keySet()) {
             BigDecimal quantity = new BigDecimal(products.get(product));
-            printedInvoice.append(product.getName()).append(", ").append(quantity).append(", ").append(product.getPriceWithTax().multiply(quantity)).append("\n");
-            numberOfProducts ++;
+            printedInvoice.append(product.getName()).append(", ")
+                    .append(quantity).append(", ")
+                    .append(product.getPriceWithTax().multiply(quantity)).append("\n");
+            numberOfProducts++;
         }
         printedInvoice.append("Liczba pozycji: ").append(numberOfProducts);
         return printedInvoice.toString();
+    }
+
+    public Product getProductByName(String name) {
+        for (Product product : products.keySet()) {
+            if (product.getName().equals(name)) {
+                return product;
+            }
+        }
+        return null;
+    }
+
+    public boolean isProductExists(String name) {
+        return getProductByName(name) != null;
+    }
+
+    public int getProductAmountByName(String name) {
+        if (isProductExists(name)) {
+            return products.get(getProductByName(name));
+        } else {
+            return 0;
+        }
     }
 }
