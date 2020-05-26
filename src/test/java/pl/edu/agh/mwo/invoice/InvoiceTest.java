@@ -1,16 +1,15 @@
 package pl.edu.agh.mwo.invoice;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.Month;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import pl.edu.agh.mwo.invoice.product.DairyProduct;
-import pl.edu.agh.mwo.invoice.product.OtherProduct;
-import pl.edu.agh.mwo.invoice.product.Product;
-import pl.edu.agh.mwo.invoice.product.TaxFreeProduct;
+import pl.edu.agh.mwo.invoice.product.*;
 
 public class InvoiceTest {
     private Invoice invoice;
@@ -131,8 +130,8 @@ public class InvoiceTest {
                 + "Kubek, 2, 10" + "\n"
                 + "Kozi Serek, 3, 32.40" + "\n"
                 + "Liczba pozycji: 2";
-        invoice.addProduct(new DairyProduct("Kozi Serek", new BigDecimal("10")), 3);
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
+        invoice.addProduct(new DairyProduct("Kozi Serek", new BigDecimal("10")), 3);
         Assert.assertEquals(validate, invoice.printInvoice());
     }
 
@@ -141,5 +140,21 @@ public class InvoiceTest {
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 2);
         invoice.addProduct(new TaxFreeProduct("Kubek", new BigDecimal("5")), 4);
         Assert.assertEquals(6, invoice.getProductAmountByName("Kubek"));
+    }
+
+    @Test
+    public void testPriceOfBottleOfWine() {
+        invoice.addProduct(new BottleOfWine("CasilleroDelDiablo", new BigDecimal("30")), 1);
+        Assert.assertThat(new BigDecimal("42.46"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+    }
+
+    @Test
+    public void testPriceOfFuelCanister() {
+        invoice.addProduct(new FuelCanister("Benzyna", new BigDecimal("30")), 1);
+        if (LocalDate.now().getMonth().equals(Month.APRIL) && LocalDate.now().getDayOfMonth() == 26) {
+            Assert.assertThat(new BigDecimal("35.56"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+        } else {
+            Assert.assertThat(new BigDecimal("42.46"), Matchers.comparesEqualTo(invoice.getGrossTotal()));
+        }
     }
 }
