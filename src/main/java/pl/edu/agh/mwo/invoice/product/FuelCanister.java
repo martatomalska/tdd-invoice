@@ -13,8 +13,9 @@ public class FuelCanister extends Product {
     @Override
     public BigDecimal getPriceWithTax() {
         LocalDate currentDate = LocalDate.now();
-        LocalDate validateDate = LocalDate.of(2020, 4, 26);
-        if (currentDate.getMonth().equals(Month.APRIL) && currentDate.getDayOfMonth() == validateDate.getDayOfMonth()) {
+        LocalDate validateDate = LocalDate.parse("2020-04-26");
+        if (currentDate.getMonth().equals(Month.APRIL)
+                && currentDate.getDayOfMonth() == validateDate.getDayOfMonth()) {
             return getPrice().add(new BigDecimal("5.56"));
         } else {
             return super.getPriceWithTax().add(new BigDecimal("5.56"));
